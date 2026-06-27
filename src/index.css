@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: Tailwind v4 defaults to the OS `prefers-color-scheme`.
+   We override it so `dark:` utilities respond to a `.dark` class on <html>,
+   which lets ThemeContext toggle + persist the choice in localStorage. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Brand theme — "Himalayan homestay" palette: saffron/marigold (warmth,
+  hospitality, festival color common across Uttarakhand homestays) paired
+  with a deep pine green (forest, mountains) instead of generic SaaS
+  blue/indigo. Exposed as Tailwind utilities: bg-brand-500, text-pine-600, etc.
+*/
+@theme {
+  --color-brand-50: #fdf6e9;
+  --color-brand-100: #faecc9;
+  --color-brand-200: #f3d68f;
+  --color-brand-300: #ecc05c;
+  --color-brand-400: #e8a33d;
+  --color-brand-500: #d98a1f;
+  --color-brand-600: #b06f17;
+  --color-brand-700: #875415;
+  --color-brand-800: #5c3a10;
+
+  --color-pine-50: #eef4ee;
+  --color-pine-100: #d3e3d2;
+  --color-pine-400: #4a7345;
+  --color-pine-500: #355b30;
+  --color-pine-600: #2a4a26;
+  --color-pine-700: #1f381c;
+
+  --color-stone-925: #14130f;
+  --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  @apply bg-white text-stone-800 dark:bg-stone-925 dark:text-stone-200;
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect reduced-motion preferences across the component library */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
