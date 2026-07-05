@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import connectDB from './config/db.js';
 import listingRoutes from './routes/listingRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
@@ -38,10 +39,13 @@ app.use(notFound);
 app.use(errorHandler);
 
 // ─── Start ────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n  🏡 HomestayAI API Server`);
-  console.log(`  ───────────────────────────`);
-  console.log(`  → Running at  : http://localhost:${PORT}`);
-  console.log(`  → Environment : ${process.env.NODE_ENV || 'development'}`);
-  console.log(`  → CORS origin : ${process.env.CLIENT_URL || 'http://localhost:5173'}\n`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n  🏡 HomestayAI API Server`);
+    console.log(`  ───────────────────────────`);
+    console.log(`  → Running at  : http://localhost:${PORT}`);
+    console.log(`  → Environment : ${process.env.NODE_ENV || 'development'}`);
+    console.log(`  → CORS origin : ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+    console.log(`  → Database    : MongoDB Atlas\n`);
+  });
 });
