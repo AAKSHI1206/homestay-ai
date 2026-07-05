@@ -1,34 +1,24 @@
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import Card from "../components/Card";
-import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
+import { Button } from "../components/ui";
 
-function Home() {
+export default function Home() {
   return (
-    <>
-      <Navbar />
-
-      <Hero />
-
-      <div className="flex flex-wrap justify-center gap-6 p-8">
-        <Card
-          title="AI Development"
-          description="Placeholder content for AI Development."
-          image="https://via.placeholder.com/300"
-          action="Learn More"
-        />
-
-        <Card
-          title="Full Stack Development"
-          description="Placeholder content for Full Stack Development."
-          image="https://via.placeholder.com/300"
-          action="Explore"
-        />
+    <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-20 text-center sm:px-6">
+      <h1 className="text-3xl font-semibold text-stone-900 dark:text-white sm:text-4xl">
+        Discover homestays, picked for you.
+      </h1>
+      <p className="max-w-xl text-stone-500 dark:text-stone-400">
+        HomestayAI matches travelers with local stays and gives hosts a
+        simple dashboard to manage bookings.
+      </p>
+      <div className="flex flex-wrap justify-center gap-3">
+        <Link to="/dashboard">
+          <Button>View dashboard</Button>
+        </Link>
+        <Link to="/about">
+          <Button variant="outline">Learn more</Button>
+        </Link>
       </div>
-
-      <Footer />
-    </>
+    </div>
   );
 }
-
-export default Home;
