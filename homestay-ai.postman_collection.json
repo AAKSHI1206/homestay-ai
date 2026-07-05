@@ -1,0 +1,458 @@
+{
+  "info": {
+    "name": "Homestay AI API — Week 4",
+    "_postman_id": "homestay-ai-week4-collection",
+    "description": "Complete REST API testing collection for the Homestay AI platform (Week 4 — Backend & API Development).\n\nBase URL: http://localhost:5000/api\n\n8 endpoints covering:\n• Health check\n• Full CRUD (Create, Read, Update, Delete)\n• Search with multi-field filtering\n• Featured listings filter\n\nEach request includes saved example responses captured from the live server.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "listing_id",
+      "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Verifies the server is running and responsive. Returns server status, timestamp, and current environment."
+      },
+      "response": [
+        {
+          "name": "200 OK — Server Running",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"status\": \"Server is running\",\n  \"timestamp\": \"2026-06-28T12:34:25.200Z\",\n  \"environment\": \"development\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. GET All Listings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listings",
+          "host": ["{{base_url}}"],
+          "path": ["listings"]
+        },
+        "description": "Returns all listings stored in the in-memory data store. Response includes a count field and the full data array."
+      },
+      "response": [
+        {
+          "name": "200 OK — All Listings Returned",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings",
+              "host": ["{{base_url}}"],
+              "path": ["listings"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"count\": 5,\n  \"data\": [\n    {\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"title\": \"Cozy Mountain Cottage\",\n      \"description\": \"A peaceful retreat nestled in the Himalayas with stunning views and crisp air.\",\n      \"location\": \"Mussoorie, Uttarakhand\",\n      \"pricePerNight\": 2500,\n      \"guests\": 4,\n      \"bedrooms\": 2,\n      \"bathrooms\": 1,\n      \"amenities\": [\"WiFi\", \"Kitchen\", \"Parking\", \"Mountain View\", \"Fireplace\"],\n      \"images\": [\"https://picsum.photos/seed/cottage1/600/400\"],\n      \"host\": { \"name\": \"Ramesh Sharma\", \"rating\": 4.8 },\n      \"rating\": 4.7,\n      \"reviewCount\": 23,\n      \"featured\": true,\n      \"createdAt\": \"2025-01-15T08:30:00.000Z\"\n    },\n    {\n      \"id\": \"b2c3d4e5-f6a7-8901-bcde-f12345678901\",\n      \"title\": \"Riverside Homestay\",\n      \"description\": \"Wake up to the sound of the Ganges. Traditional Garhwali home with modern comforts.\",\n      \"location\": \"Rishikesh, Uttarakhand\",\n      \"pricePerNight\": 1800,\n      \"guests\": 6,\n      \"bedrooms\": 3,\n      \"bathrooms\": 2,\n      \"amenities\": [\"WiFi\", \"Kitchen\", \"River View\", \"Yoga Deck\", \"Hot Water\"],\n      \"images\": [\"https://picsum.photos/seed/river1/600/400\"],\n      \"host\": { \"name\": \"Sunita Rawat\", \"rating\": 4.9 },\n      \"rating\": 4.9,\n      \"reviewCount\": 47,\n      \"featured\": true,\n      \"createdAt\": \"2025-02-10T10:00:00.000Z\"\n    },\n    {\n      \"id\": \"c3d4e5f6-a7b8-9012-cdef-123456789012\",\n      \"title\": \"Heritage Haveli Stay\",\n      \"description\": \"Experience royal Rajasthani living in this beautifully restored 18th-century haveli.\",\n      \"location\": \"Jaipur, Rajasthan\",\n      \"pricePerNight\": 4500,\n      \"guests\": 2,\n      \"bedrooms\": 1,\n      \"bathrooms\": 1,\n      \"amenities\": [\"WiFi\", \"AC\", \"Breakfast Included\", \"Cultural Tours\", \"Rooftop\"],\n      \"images\": [\"https://picsum.photos/seed/haveli1/600/400\"],\n      \"host\": { \"name\": \"Priya Rathore\", \"rating\": 4.6 },\n      \"rating\": 4.6,\n      \"reviewCount\": 15,\n      \"featured\": false,\n      \"createdAt\": \"2025-03-05T14:20:00.000Z\"\n    },\n    {\n      \"id\": \"d4e5f6a7-b8c9-0123-defa-234567890123\",\n      \"title\": \"Kerala Backwater Houseboat\",\n      \"description\": \"Float through the serene backwaters on this traditional rice boat converted into a luxury stay.\",\n      \"location\": \"Alleppey, Kerala\",\n      \"pricePerNight\": 8000,\n      \"guests\": 4,\n      \"bedrooms\": 2,\n      \"bathrooms\": 2,\n      \"amenities\": [\"WiFi\", \"AC\", \"All Meals\", \"Fishing\", \"Kayak\", \"Sunset Deck\"],\n      \"images\": [\"https://picsum.photos/seed/boat1/600/400\"],\n      \"host\": { \"name\": \"Thomas Kurian\", \"rating\": 4.9 },\n      \"rating\": 4.8,\n      \"reviewCount\": 62,\n      \"featured\": true,\n      \"createdAt\": \"2025-04-12T09:45:00.000Z\"\n    },\n    {\n      \"id\": \"e5f6a7b8-c9d0-1234-efab-345678901234\",\n      \"title\": \"Bamboo Forest Cabin\",\n      \"description\": \"Eco-friendly cabin surrounded by a lush bamboo grove in the Western Ghats.\",\n      \"location\": \"Coorg, Karnataka\",\n      \"pricePerNight\": 3200,\n      \"guests\": 2,\n      \"bedrooms\": 1,\n      \"bathrooms\": 1,\n      \"amenities\": [\"WiFi\", \"Organic Meals\", \"Nature Walks\", \"Bird Watching\", \"Hammock\"],\n      \"images\": [\"https://picsum.photos/seed/bamboo1/600/400\"],\n      \"host\": { \"name\": \"Kavya Nair\", \"rating\": 4.7 },\n      \"rating\": 4.5,\n      \"reviewCount\": 31,\n      \"featured\": false,\n      \"createdAt\": \"2025-05-20T11:15:00.000Z\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "3. GET Featured Listings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listings/featured",
+          "host": ["{{base_url}}"],
+          "path": ["listings", "featured"]
+        },
+        "description": "Returns only listings that have featured: true. Useful for homepage hero sections or promoted listings."
+      },
+      "response": [
+        {
+          "name": "200 OK — Featured Listings Only",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/featured",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "featured"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"title\": \"Cozy Mountain Cottage\",\n      \"description\": \"A peaceful retreat nestled in the Himalayas with stunning views and crisp air.\",\n      \"location\": \"Mussoorie, Uttarakhand\",\n      \"pricePerNight\": 2500,\n      \"guests\": 4,\n      \"bedrooms\": 2,\n      \"bathrooms\": 1,\n      \"amenities\": [\"WiFi\", \"Kitchen\", \"Parking\", \"Mountain View\", \"Fireplace\"],\n      \"images\": [\"https://picsum.photos/seed/cottage1/600/400\"],\n      \"host\": { \"name\": \"Ramesh Sharma\", \"rating\": 4.8 },\n      \"rating\": 4.7,\n      \"reviewCount\": 23,\n      \"featured\": true,\n      \"createdAt\": \"2025-01-15T08:30:00.000Z\"\n    },\n    {\n      \"id\": \"b2c3d4e5-f6a7-8901-bcde-f12345678901\",\n      \"title\": \"Riverside Homestay\",\n      \"description\": \"Wake up to the sound of the Ganges. Traditional Garhwali home with modern comforts.\",\n      \"location\": \"Rishikesh, Uttarakhand\",\n      \"pricePerNight\": 1800,\n      \"guests\": 6,\n      \"bedrooms\": 3,\n      \"bathrooms\": 2,\n      \"amenities\": [\"WiFi\", \"Kitchen\", \"River View\", \"Yoga Deck\", \"Hot Water\"],\n      \"images\": [\"https://picsum.photos/seed/river1/600/400\"],\n      \"host\": { \"name\": \"Sunita Rawat\", \"rating\": 4.9 },\n      \"rating\": 4.9,\n      \"reviewCount\": 47,\n      \"featured\": true,\n      \"createdAt\": \"2025-02-10T10:00:00.000Z\"\n    },\n    {\n      \"id\": \"d4e5f6a7-b8c9-0123-defa-234567890123\",\n      \"title\": \"Kerala Backwater Houseboat\",\n      \"description\": \"Float through the serene backwaters on this traditional rice boat converted into a luxury stay.\",\n      \"location\": \"Alleppey, Kerala\",\n      \"pricePerNight\": 8000,\n      \"guests\": 4,\n      \"bedrooms\": 2,\n      \"bathrooms\": 2,\n      \"amenities\": [\"WiFi\", \"AC\", \"All Meals\", \"Fishing\", \"Kayak\", \"Sunset Deck\"],\n      \"images\": [\"https://picsum.photos/seed/boat1/600/400\"],\n      \"host\": { \"name\": \"Thomas Kurian\", \"rating\": 4.9 },\n      \"rating\": 4.8,\n      \"reviewCount\": 62,\n      \"featured\": true,\n      \"createdAt\": \"2025-04-12T09:45:00.000Z\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "4. GET Search Listings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listings/search?q=mountain&maxPrice=5000",
+          "host": ["{{base_url}}"],
+          "path": ["listings", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "mountain",
+              "description": "Keyword search — matches title, description, location, and amenities"
+            },
+            {
+              "key": "maxPrice",
+              "value": "5000",
+              "description": "Maximum price per night"
+            },
+            {
+              "key": "location",
+              "value": "",
+              "description": "Filter by location name",
+              "disabled": true
+            },
+            {
+              "key": "minPrice",
+              "value": "",
+              "description": "Minimum price per night",
+              "disabled": true
+            },
+            {
+              "key": "guests",
+              "value": "",
+              "description": "Minimum guest capacity",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Multi-field search and filter endpoint. Supports query parameters:\n• q — keyword search across title, description, location, amenities\n• location — filter by location\n• minPrice / maxPrice — price range filter\n• guests — minimum guest capacity\n\nAll parameters are optional and combinable."
+      },
+      "response": [
+        {
+          "name": "200 OK — Search Results Found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/search?q=mountain&maxPrice=5000",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "search"],
+              "query": [
+                { "key": "q", "value": "mountain" },
+                { "key": "maxPrice", "value": "5000" }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n      \"title\": \"Cozy Mountain Cottage\",\n      \"description\": \"A peaceful retreat nestled in the Himalayas with stunning views and crisp air.\",\n      \"location\": \"Mussoorie, Uttarakhand\",\n      \"pricePerNight\": 2500,\n      \"guests\": 4,\n      \"bedrooms\": 2,\n      \"bathrooms\": 1,\n      \"amenities\": [\"WiFi\", \"Kitchen\", \"Parking\", \"Mountain View\", \"Fireplace\"],\n      \"images\": [\"https://picsum.photos/seed/cottage1/600/400\"],\n      \"host\": { \"name\": \"Ramesh Sharma\", \"rating\": 4.8 },\n      \"rating\": 4.7,\n      \"reviewCount\": 23,\n      \"featured\": true,\n      \"createdAt\": \"2025-01-15T08:30:00.000Z\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "5. GET Single Listing by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listings/{{listing_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["listings", "{{listing_id}}"]
+        },
+        "description": "Returns a single listing by its UUID. Returns 404 if the ID does not exist."
+      },
+      "response": [
+        {
+          "name": "200 OK — Listing Found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"title\": \"Cozy Mountain Cottage\",\n    \"description\": \"A peaceful retreat nestled in the Himalayas with stunning views and crisp air.\",\n    \"location\": \"Mussoorie, Uttarakhand\",\n    \"pricePerNight\": 2500,\n    \"guests\": 4,\n    \"bedrooms\": 2,\n    \"bathrooms\": 1,\n    \"amenities\": [\"WiFi\", \"Kitchen\", \"Parking\", \"Mountain View\", \"Fireplace\"],\n    \"images\": [\"https://picsum.photos/seed/cottage1/600/400\"],\n    \"host\": { \"name\": \"Ramesh Sharma\", \"rating\": 4.8 },\n    \"rating\": 4.7,\n    \"reviewCount\": 23,\n    \"featured\": true,\n    \"createdAt\": \"2025-01-15T08:30:00.000Z\"\n  }\n}"
+        },
+        {
+          "name": "404 Not Found — Invalid ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/nonexistent-id-12345",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "nonexistent-id-12345"]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Listing with id \\\"nonexistent-id-12345\\\" not found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "6. POST Create Listing",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Hilltop Treehouse\",\n  \"description\": \"Sleep among the canopy in this stunning treehouse.\",\n  \"location\": \"Munnar, Kerala\",\n  \"pricePerNight\": 3500,\n  \"guests\": 2,\n  \"bedrooms\": 1,\n  \"bathrooms\": 1,\n  \"amenities\": [\"WiFi\", \"Breakfast\", \"Nature Walks\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/listings",
+          "host": ["{{base_url}}"],
+          "path": ["listings"]
+        },
+        "description": "Creates a new listing. Required fields: title, location, pricePerNight. Returns 201 Created on success, 400 Bad Request on validation failure."
+      },
+      "response": [
+        {
+          "name": "201 Created — Listing Added",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hilltop Treehouse\",\n  \"description\": \"Sleep among the canopy in this stunning treehouse.\",\n  \"location\": \"Munnar, Kerala\",\n  \"pricePerNight\": 3500,\n  \"guests\": 2,\n  \"bedrooms\": 1,\n  \"bathrooms\": 1,\n  \"amenities\": [\"WiFi\", \"Breakfast\", \"Nature Walks\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/listings",
+              "host": ["{{base_url}}"],
+              "path": ["listings"]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"ea7f5724-55e1-49d0-adad-04ab809619ce\",\n    \"title\": \"Hilltop Treehouse\",\n    \"description\": \"Sleep among the canopy in this stunning treehouse.\",\n    \"location\": \"Munnar, Kerala\",\n    \"pricePerNight\": 3500,\n    \"guests\": 2,\n    \"bedrooms\": 1,\n    \"bathrooms\": 1,\n    \"amenities\": [\"WiFi\", \"Breakfast\", \"Nature Walks\"],\n    \"images\": [],\n    \"host\": { \"name\": \"New Host\", \"rating\": 0 },\n    \"rating\": 0,\n    \"reviewCount\": 0,\n    \"featured\": false,\n    \"createdAt\": \"2026-06-28T12:37:45.397Z\"\n  }\n}"
+        },
+        {
+          "name": "400 Bad Request — Validation Error",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"missing required fields\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/listings",
+              "host": ["{{base_url}}"],
+              "path": ["listings"]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"title is required, location is required, pricePerNight is required\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "7. PUT Update Listing",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pricePerNight\": 2200,\n  \"featured\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/listings/{{listing_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["listings", "{{listing_id}}"]
+        },
+        "description": "Updates an existing listing by ID. Supports partial updates — only send the fields you want to change. Returns 200 OK on success with the full updated object, 404 if the listing is not found, 400 if pricePerNight is invalid."
+      },
+      "response": [
+        {
+          "name": "200 OK — Listing Updated",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pricePerNight\": 2200,\n  \"featured\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/listings/b2c3d4e5-f6a7-8901-bcde-f12345678901",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "b2c3d4e5-f6a7-8901-bcde-f12345678901"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"b2c3d4e5-f6a7-8901-bcde-f12345678901\",\n    \"title\": \"Riverside Homestay\",\n    \"description\": \"Wake up to the sound of the Ganges. Traditional Garhwali home with modern comforts.\",\n    \"location\": \"Rishikesh, Uttarakhand\",\n    \"pricePerNight\": 2200,\n    \"guests\": 6,\n    \"bedrooms\": 3,\n    \"bathrooms\": 2,\n    \"amenities\": [\"WiFi\", \"Kitchen\", \"River View\", \"Yoga Deck\", \"Hot Water\"],\n    \"images\": [\"https://picsum.photos/seed/river1/600/400\"],\n    \"host\": { \"name\": \"Sunita Rawat\", \"rating\": 4.9 },\n    \"rating\": 4.9,\n    \"reviewCount\": 47,\n    \"featured\": false,\n    \"createdAt\": \"2025-02-10T10:00:00.000Z\",\n    \"updatedAt\": \"2026-06-28T12:37:57.773Z\"\n  }\n}"
+        },
+        {
+          "name": "404 Not Found — Listing Does Not Exist",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pricePerNight\": 2200\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/listings/nonexistent-id-12345",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "nonexistent-id-12345"]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Listing with id \\\"nonexistent-id-12345\\\" not found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "8. DELETE Listing",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/listings/{{listing_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["listings", "{{listing_id}}"]
+        },
+        "description": "Deletes a listing by ID. Returns 204 No Content on success (empty response body). Returns 404 if the listing does not exist."
+      },
+      "response": [
+        {
+          "name": "204 No Content — Listing Deleted",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/e5f6a7b8-c9d0-1234-efab-345678901234",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "e5f6a7b8-c9d0-1234-efab-345678901234"]
+            }
+          },
+          "status": "No Content",
+          "code": 204,
+          "_postman_previewlanguage": "text",
+          "header": [],
+          "body": ""
+        },
+        {
+          "name": "404 Not Found — Listing Does Not Exist",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listings/nonexistent-id-12345",
+              "host": ["{{base_url}}"],
+              "path": ["listings", "nonexistent-id-12345"]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Listing with id \\\"nonexistent-id-12345\\\" not found\"\n}"
+        }
+      ]
+    }
+  ]
+}
