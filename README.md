@@ -12,10 +12,10 @@ An AI-powered homestay platform that helps travelers discover accommodations and
 ### Backend
 - Node.js
 - Express.js
-- In-memory data store (Week 4)
+- MongoDB Atlas (cloud database)
+- Mongoose ODM
 
 ### Planned (Future Weeks)
-- MongoDB Atlas (Week 5)
 - JWT Authentication
 - Gemini API
 - Vercel + Render deployment
@@ -25,7 +25,7 @@ An AI-powered homestay platform that helps travelers discover accommodations and
 ## Project Structure
 
 ```
-homestay-ai-component-library/
+homestay-ai/
 ├── frontend/              # React + Vite app
 │   ├── src/
 │   │   ├── api/           # API client (listingsApi.js)
@@ -39,12 +39,14 @@ homestay-ai-component-library/
 │   └── package.json
 │
 ├── backend/               # Express.js API
+│   ├── config/            # Database connection (db.js)        ← Week 5
 │   ├── controllers/       # listingController.js
+│   ├── models/            # Listing.js (Mongoose schema)       ← Week 5
 │   ├── routes/            # listingRoutes.js
 │   ├── middleware/        # errorHandler.js, validateListing.js
-│   ├── data/              # listings.js (in-memory store)
-│   ├── utils/             # (reserved for future utilities)
+│   ├── data/              # listings.js (seed data / reference)
 │   ├── server.js
+│   ├── seed.js            # Database seeder script              ← Week 5
 │   ├── .env
 │   ├── .env.example
 │   └── package.json
@@ -59,18 +61,49 @@ homestay-ai-component-library/
 ### Prerequisites
 - Node.js 18+
 - npm
+- MongoDB Atlas account (free tier works)
 
-### 1. Backend
+### 1. MongoDB Atlas Setup
+
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and create a free account
+2. Create a new cluster (free M0 tier)
+3. Create a database user with a username and password
+4. Add your IP address to the IP Access List (or use `0.0.0.0/0` for development)
+5. Click **Connect** → **Connect your application** → Copy the connection string
+6. Replace `<username>`, `<password>`, and `<cluster>` in the connection string
+
+### 2. Environment Variables
+
+Copy `.env.example` to `.env` in the backend folder:
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Fill in your values:
+
+```
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/homestay-ai?retryWrites=true&w=majority
+```
+
+> ⚠ **Never commit `.env` to version control.** It is already listed in `.gitignore`.
+
+### 3. Backend
 
 ```bash
 cd backend
 npm install
-npm run dev
+npm run seed     # Populate database with sample listings
+npm run dev      # Start development server
 ```
 
 Server starts at **http://localhost:5000**
 
-### 2. Frontend
+### 4. Frontend
 
 ```bash
 cd frontend
@@ -80,15 +113,65 @@ npm run dev
 
 App opens at **http://localhost:5173**
 
-### Environment Variables
+---
 
-Copy `.env.example` to `.env` in the backend folder:
+## Database
 
+### Why MongoDB Atlas?
+
+- **Document model** — listings are naturally represented as JSON-like documents with nested objects (host) and arrays (amenities, images)
+- **Free tier** — MongoDB Atlas M0 provides 512 MB free storage, perfect for development
+- **Mongoose ODM** — provides schema validation, type casting, and query building that integrates cleanly with Express
+- **Persistence** — data survives server restarts (unlike the Week 4 in-memory store)
+
+### Schema Diagram
+
+```mermaid
+erDiagram
+    LISTING {
+        ObjectId _id PK
+        String title
+        String description
+        String location
+        Number pricePerNight
+        Number guests
+        Number bedrooms
+        Number bathrooms
+        Array amenities
+        Array images
+        Number rating
+        Number reviewCount
+        Boolean featured
+        Date createdAt
+        Date updatedAt
+    }
+    HOST {
+        String name
+        Number rating
+    }
+    LISTING ||--|| HOST : "embeds"
 ```
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-```
+
+### Listing Schema Details
+
+| Field | Type | Required | Default | Validation |
+|-------|------|----------|---------|------------|
+| `title` | String | ✅ | — | trimmed |
+| `description` | String | ❌ | `''` | trimmed |
+| `location` | String | ✅ | — | trimmed |
+| `pricePerNight` | Number | ✅ | — | min: 1 |
+| `guests` | Number | ❌ | `1` | min: 1 |
+| `bedrooms` | Number | ❌ | `1` | min: 0 |
+| `bathrooms` | Number | ❌ | `1` | min: 0 |
+| `amenities` | [String] | ❌ | `[]` | — |
+| `images` | [String] | ❌ | `[]` | — |
+| `host.name` | String | ❌ | `'New Host'` | trimmed |
+| `host.rating` | Number | ❌ | `0` | 0–5 |
+| `rating` | Number | ❌ | `0` | 0–5 |
+| `reviewCount` | Number | ❌ | `0` | min: 0 |
+| `featured` | Boolean | ❌ | `false` | — |
+| `createdAt` | Date | auto | — | Mongoose timestamps |
+| `updatedAt` | Date | auto | — | Mongoose timestamps |
 
 ---
 
@@ -123,3 +206,4 @@ CLIENT_URL=http://localhost:5173
 - **Week 2**: Component library (Button, Input, Modal, Loader, Toast)
 - **Week 3**: Pages, routing, dark mode, responsive layout
 - **Week 4**: Backend API (Express.js), frontend integration, CRUD operations
+- **Week 5**: MongoDB Atlas integration, Mongoose ODM, schema design, database seeder
