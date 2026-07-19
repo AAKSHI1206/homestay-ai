@@ -9,6 +9,17 @@
 const API_BASE = 'http://localhost:5000/api';
 
 /**
+ * getAuthHeaders
+ * ──────────────
+ * Reads the JWT from localStorage and returns an object with the
+ * Authorization header. Used by write operations that require auth.
+ */
+function getAuthHeaders() {
+  const token = localStorage.getItem('homestay-ai-token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+/**
  * Internal helper — sends a request, parses JSON, and throws on
  * non-ok responses so callers can rely on a single catch path.
  */
@@ -61,6 +72,7 @@ export async function fetchListingById(id) {
 export async function createListing(listingData) {
   return request(`${API_BASE}/listings`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
     body: JSON.stringify(listingData),
   });
 }
@@ -69,6 +81,7 @@ export async function createListing(listingData) {
 export async function updateListing(id, listingData) {
   return request(`${API_BASE}/listings/${id}`, {
     method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
     body: JSON.stringify(listingData),
   });
 }
@@ -77,5 +90,6 @@ export async function updateListing(id, listingData) {
 export async function deleteListing(id) {
   return request(`${API_BASE}/listings/${id}`, {
     method: 'DELETE',
+    headers: { ...getAuthHeaders() },
   });
 }

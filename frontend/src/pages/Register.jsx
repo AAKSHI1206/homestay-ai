@@ -1,33 +1,45 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, Input, Loader, useToast } from "../components/ui";
-import { useAuth } from "../context/AuthContext";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button, Input, Loader, useToast } from '../components/ui';
+import { useAuth } from '../context/AuthContext';
 
-export default function Login() {
-  const { login } = useAuth();
+/**
+ * Register
+ * ────────
+ * User registration page. Matches the existing Login page style exactly.
+ * On success, stores JWT and redirects to /dashboard.
+ */
+export default function Register() {
+  const { register } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    // Client-side validation (matches Login page pattern)
     const nextErrors = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) nextErrors.email = "Enter a valid email address.";
-    if (password.length < 6) nextErrors.password = "Password must be at least 6 characters.";
+    if (!name.trim()) nextErrors.name = 'Name is required.';
+    if (!/^\S+@\S+\.\S+$/.test(email))
+      nextErrors.email = 'Enter a valid email address.';
+    if (password.length < 6)
+      nextErrors.password = 'Password must be at least 6 characters.';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
     setSubmitting(true);
     try {
-      await login(email, password);
-      toast("Logged in successfully.", { type: "success" });
-      navigate("/dashboard");
+      await register(name.trim(), email, password);
+      toast('Account created successfully.', { type: 'success' });
+      navigate('/dashboard');
     } catch (err) {
-      toast(err.message || "Login failed.", { type: "error" });
+      toast(err.message || 'Registration failed.', { type: 'error' });
     } finally {
       setSubmitting(false);
     }
@@ -36,9 +48,17 @@ export default function Login() {
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-6 px-4 py-16 sm:px-6">
       <h1 className="text-2xl font-semibold text-stone-900 dark:text-white">
-        Log in
+        Create an account
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <Input
+          label="Name"
+          placeholder="Your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={errors.name}
+          required
+        />
         <Input
           label="Email"
           type="email"
@@ -58,7 +78,7 @@ export default function Login() {
           required
         />
         <Button type="submit" className="w-full" disabled={submitting}>
-          {submitting ? <Loader size="sm" label="Logging in" /> : "Log in"}
+          {submitting ? <Loader size="sm" label="Creating account" /> : 'Create account'}
         </Button>
       </form>
 
@@ -96,12 +116,12 @@ export default function Login() {
       </a>
 
       <p className="text-center text-sm text-stone-500 dark:text-stone-400">
-        Don&apos;t have an account?{" "}
+        Already have an account?{' '}
         <Link
-          to="/register"
+          to="/login"
           className="font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
         >
-          Create one
+          Log in
         </Link>
       </p>
     </div>
