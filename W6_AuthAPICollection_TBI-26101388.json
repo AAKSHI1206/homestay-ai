@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "W6 Auth API Collection",
+    "description": "Postman collection for Week 6 Auth API Deliverable. Contains registration, login (with auto-save JWT script), and protected routes testing.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Aakshi Handa\",\n  \"email\": \"aakshi@example.com\",\n  \"password\": \"test1234\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/register",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Login User (Auto-saves JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const json = pm.response.json();",
+              "    pm.environment.set(\"JWT_TOKEN\", json.token);",
+              "    console.log(\"JWT saved to environment variable!\");",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"aakshi@example.com\",\n  \"password\": \"test1234\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/auth/login",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Get Current User (Protected)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/auth/me",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{JWT_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. Create Listing (Protected - Works)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Test Mountain Lodge\",\n  \"location\": \"Manali, Himachal Pradesh\",\n  \"description\": \"A cozy lodge for testing authentication.\",\n  \"pricePerNight\": 3000\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/listings",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "listings"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{JWT_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "5. Create Listing (No Auth - Fails 401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"This should fail\",\n  \"location\": \"Nowhere\",\n  \"pricePerNight\": 100\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/listings",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "listings"
+          ]
+        }
+      }
+    }
+  ]
+}

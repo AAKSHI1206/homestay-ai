@@ -8,6 +8,7 @@ import {
   updateListing,
   deleteListing,
 } from '../controllers/listingController.js';
+import { protect } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -18,8 +19,8 @@ router.get('/search', searchListings);
 // ── CRUD ──────────────────────────────────────────────────────
 router.get('/', getAllListings);
 router.get('/:id', getListingById);
-router.post('/', createListing);
-router.put('/:id', updateListing);
-router.delete('/:id', deleteListing);
+router.post('/', protect, createListing);
+router.put('/:id', protect, updateListing);
+router.delete('/:id', protect, deleteListing);
 
 export default router;
