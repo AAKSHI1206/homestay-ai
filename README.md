@@ -15,9 +15,10 @@ An AI-powered homestay platform that helps travelers discover accommodations and
 - MongoDB Atlas (cloud database)
 - Mongoose ODM
 
+### AI Integration
+- Google Gemini 2.0 Flash (review sentiment analysis)
+
 ### Planned (Future Weeks)
-- JWT Authentication
-- Gemini API
 - Vercel + Render deployment
 
 ---
@@ -88,7 +89,15 @@ PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/homestay-ai?retryWrites=true&w=majority
+JWT_SECRET=your_jwt_secret_here
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
+
+#### Getting a Gemini API Key
+
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Click **Create API Key**
+3. Copy the key and paste it as `GEMINI_API_KEY` in your `.env` file
 
 > ⚠ **Never commit `.env` to version control.** It is already listed in `.gitignore`.
 
@@ -187,6 +196,7 @@ erDiagram
 | `POST`   | `/api/listings`              | Create listing         | 201, 400         |
 | `PUT`    | `/api/listings/:id`          | Update listing         | 200, 400, 404    |
 | `DELETE` | `/api/listings/:id`          | Delete listing         | 204, 404         |
+| `POST`   | `/api/reviews/analyze`       | AI review analysis     | 200, 400, 401, 429, 502 |
 
 ### Search Query Parameters
 
@@ -207,3 +217,5 @@ erDiagram
 - **Week 3**: Pages, routing, dark mode, responsive layout
 - **Week 4**: Backend API (Express.js), frontend integration, CRUD operations
 - **Week 5**: MongoDB Atlas integration, Mongoose ODM, schema design, database seeder
+- **Week 6**: JWT authentication (local + Google OAuth), protected routes, rate limiting
+- **Week 7**: AI integration (Google Gemini), review sentiment analysis, prompt engineering
