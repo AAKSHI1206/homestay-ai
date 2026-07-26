@@ -24,9 +24,15 @@ function getAuthHeaders() {
  * non-ok responses so callers can rely on a single catch path.
  */
 async function request(url, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...getAuthHeaders(),
+    ...(options.headers || {}),
+  };
+
   const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers,
   });
 
   // 204 No Content — nothing to parse

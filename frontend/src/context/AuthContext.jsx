@@ -104,9 +104,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, [saveToken]);
 
+  // ── Update local user state (for Profile updates) ─────────
+  const updateUser = useCallback((updatedUserData) => {
+    setUser((prev) => (prev ? { ...prev, ...updatedUserData } : updatedUserData));
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, login, register, logout, setAuthFromToken }}
+      value={{ user, token, loading, login, register, logout, setAuthFromToken, updateUser }}
     >
       {children}
     </AuthContext.Provider>

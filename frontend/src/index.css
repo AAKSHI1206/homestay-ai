@@ -29,7 +29,12 @@
   --color-pine-600: #2a4a26;
   --color-pine-700: #1f381c;
 
-  --color-stone-925: #14130f;
+  --color-stone-800: #282420;
+  --color-stone-850: #1e1a17;
+  --color-stone-875: #181512;
+  --color-stone-900: #14120f;
+  --color-stone-925: #100e0c;
+  --color-stone-950: #0a0908;
   --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -51,6 +56,8 @@ body {
   flex-direction: column;
 }
 
+/* ── Animations ──────────────────────────────────────────────── */
+
 @keyframes toast-in {
   from {
     opacity: 0;
@@ -60,6 +67,82 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Utility classes ─────────────────────────────────────────── */
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.1) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #44403c;
 }
 
 /* Respect reduced-motion preferences across the component library */

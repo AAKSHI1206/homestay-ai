@@ -7,14 +7,25 @@
 
 const API_BASE = 'http://localhost:5000/api';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('homestay-ai-token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 /**
  * Internal helper — sends a request, parses JSON, and throws on
  * non-ok responses so callers can rely on a single catch path.
  */
 async function request(url, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...getAuthHeaders(),
+    ...(options.headers || {}),
+  };
+
   const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers,
   });
 
   const data = await res.json();
@@ -50,5 +61,29 @@ export async function fetchCurrentUser(token) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
+  });
+}
+
+// ── PUT /api/auth/profile ────────────────────────────────────
+export async function updateProfile(profileData, token) {
+  return request(`${API_BASE}/auth/profile`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(profileData),
+  });
+}
+
+// ── PUT /api/auth/password ───────────────────────────────────
+export async function changePassword(passwordData, token) {
+  return request(`${API_BASE}/auth/password`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(passwordData),
   });
 }
