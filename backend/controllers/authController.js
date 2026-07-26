@@ -24,6 +24,7 @@ function sanitizeUser(user) {
     id: user._id,
     name: user.name,
     email: user.email,
+    avatar: user.avatar || '',
     createdAt: user.createdAt,
   };
 }
@@ -133,4 +134,103 @@ export const googleCallback = (req, res) => {
   const token = generateToken(req.user._id);
   const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
   res.redirect(`${clientURL}/auth/callback?token=${token}`);
+};
+
+// ─────────────────────────────────────────────────────────────
+// PUT /api/auth/profile
+// Updates the authenticated user's profile (name, email, avatar).
+// Requires: protect middleware.
+// Status: 200 | 400
+// ─────────────────────────────────────────────────────────────
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { name, email, avatar } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (name !== undefined) {
+      if (!name.trim()) {
+        const err = new Error('Name cannot be empty');
+        err.statusCode = 400;
+        return next(err);
+      }
+      user.name = name.trim();
+    }
+
+    if (email !== undefined) {
+      const normalizedEmail = email.toLowerCase().trim();
+      if (normalizedEmail !== user.email) {
+        const existing = await User.findOne({ email: normalizedEmail });
+        if (existing) {
+          const err = new Error('An account with this email already exists');
+          err.statusCode = 400;
+          return next(err);
+        }
+        user.email = normalizedEmail;
+      }
+    }
+
+    if (avatar !== undefined) {
+      user.avatar = avatar.trim();
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      data: sanitizeUser(user),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+// PUT /api/auth/password
+// Changes the authenticated user's password.
+// Requires: protect middleware + current password verification.
+// Status: 200 | 400 | 401
+// ─────────────────────────────────────────────────────────────
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      const err = new Error('Both current and new password are required');
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    if (newPassword.length < 6) {
+      const err = new Error('New password must be at least 6 characters');
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+
+    if (!user.password) {
+      const err = new Error(
+        'This account uses Google sign-in. Password cannot be changed here.'
+      );
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      const err = new Error('Current password is incorrect');
+      err.statusCode = 401;
+      return next(err);
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
 };

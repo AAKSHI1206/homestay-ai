@@ -13,6 +13,11 @@ import mongoose from 'mongoose';
 
 const listingSchema = new mongoose.Schema(
   {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'owner is required'],
+    },
     title: {
       type: String,
       required: [true, 'title is required'],
@@ -93,6 +98,7 @@ const listingSchema = new mongoose.Schema(
 );
 
 // ─── Indexes ──────────────────────────────────────────────────
+listingSchema.index({ owner: 1 });
 listingSchema.index({ featured: 1 });
 listingSchema.index({ location: 'text', title: 'text', description: 'text' });
 

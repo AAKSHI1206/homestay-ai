@@ -2,12 +2,15 @@ import Listing from '../models/Listing.js';
 
 // ─────────────────────────────────────────────────────────────
 // GET /api/listings
-// Returns every listing.
+// Returns listings owned by the authenticated user.
+// Falls back to all listings for unauthenticated requests
+// (preserves backward compatibility for public browsing).
 // Status: 200
 // ─────────────────────────────────────────────────────────────
-export const getAllListings = async (_req, res, next) => {
+export const getAllListings = async (req, res, next) => {
   try {
-    const listings = await Listing.find();
+    const filter = req.user ? { owner: req.user._id } : {};
+    const listings = await Listing.find(filter).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: listings.length,
@@ -45,6 +48,11 @@ export const searchListings = async (req, res, next) => {
   try {
     const { q, location, minPrice, maxPrice, guests } = req.query;
     const filter = {};
+
+    // Scope to authenticated user if available
+    if (req.user) {
+      filter.owner = req.user._id;
+    }
 
     if (q) {
       const keyword = q.toLowerCase();
@@ -132,6 +140,7 @@ export const getListingById = async (req, res, next) => {
 // ─────────────────────────────────────────────────────────────
 // POST /api/listings
 // Creates a new listing. Requires title, location, pricePerNight.
+// Auto-assigns the authenticated user as owner.
 // Status: 201 | 400
 // ─────────────────────────────────────────────────────────────
 export const createListing = async (req, res, next) => {
@@ -145,6 +154,7 @@ export const createListing = async (req, res, next) => {
       bedrooms,
       bathrooms,
       amenities,
+      images,
     } = req.body;
 
     // Validation
@@ -163,6 +173,7 @@ export const createListing = async (req, res, next) => {
     }
 
     const newListing = await Listing.create({
+      owner: req.user._id,
       title: title.trim(),
       description: description?.trim() || '',
       location: location.trim(),
@@ -171,6 +182,7 @@ export const createListing = async (req, res, next) => {
       bedrooms: bedrooms || 1,
       bathrooms: bathrooms || 1,
       amenities: Array.isArray(amenities) ? amenities : [],
+      images: Array.isArray(images) ? images : [],
     });
 
     res.status(201).json({ success: true, data: newListing });
@@ -182,10 +194,26 @@ export const createListing = async (req, res, next) => {
 // ─────────────────────────────────────────────────────────────
 // PUT /api/listings/:id
 // Updates an existing listing (partial update supported).
-// Status: 200 | 400 | 404
+// Only the owner can update.
+// Status: 200 | 400 | 403 | 404
 // ─────────────────────────────────────────────────────────────
 export const updateListing = async (req, res, next) => {
   try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+      const err = new Error(`Listing with id "${req.params.id}" not found`);
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    // Verify ownership
+    if (listing.owner.toString() !== req.user._id.toString()) {
+      const err = new Error('Not authorized to update this listing');
+      err.statusCode = 403;
+      return next(err);
+    }
+
     const {
       title,
       description,
@@ -195,6 +223,7 @@ export const updateListing = async (req, res, next) => {
       bedrooms,
       bathrooms,
       amenities,
+      images,
       featured,
     } = req.body;
 
@@ -217,6 +246,7 @@ export const updateListing = async (req, res, next) => {
     if (bedrooms !== undefined) update.bedrooms = bedrooms;
     if (bathrooms !== undefined) update.bathrooms = bathrooms;
     if (amenities !== undefined) update.amenities = amenities;
+    if (images !== undefined) update.images = images;
     if (featured !== undefined) update.featured = featured;
 
     const updatedListing = await Listing.findByIdAndUpdate(
@@ -224,12 +254,6 @@ export const updateListing = async (req, res, next) => {
       update,
       { new: true, runValidators: true }
     );
-
-    if (!updatedListing) {
-      const err = new Error(`Listing with id "${req.params.id}" not found`);
-      err.statusCode = 404;
-      return next(err);
-    }
 
     res.status(200).json({ success: true, data: updatedListing });
   } catch (err) {
@@ -245,18 +269,27 @@ export const updateListing = async (req, res, next) => {
 
 // ─────────────────────────────────────────────────────────────
 // DELETE /api/listings/:id
-// Deletes a listing.
-// Status: 204 | 404
+// Deletes a listing. Only the owner can delete.
+// Status: 204 | 403 | 404
 // ─────────────────────────────────────────────────────────────
 export const deleteListing = async (req, res, next) => {
   try {
-    const listing = await Listing.findByIdAndDelete(req.params.id);
+    const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
       const err = new Error(`Listing with id "${req.params.id}" not found`);
       err.statusCode = 404;
       return next(err);
     }
+
+    // Verify ownership
+    if (listing.owner.toString() !== req.user._id.toString()) {
+      const err = new Error('Not authorized to delete this listing');
+      err.statusCode = 403;
+      return next(err);
+    }
+
+    await Listing.findByIdAndDelete(req.params.id);
 
     // 204 No Content — no body sent
     res.status(204).send();

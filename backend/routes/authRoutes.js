@@ -1,6 +1,13 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { register, login, getMe, googleCallback } from '../controllers/authController.js';
+import {
+  register,
+  login,
+  getMe,
+  googleCallback,
+  updateProfile,
+  changePassword,
+} from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../validators/authValidator.js';
 import { protect } from '../middleware/auth.js';
 import { authLimiter } from '../middleware/rateLimiter.js';
@@ -13,6 +20,8 @@ router.post('/login', authLimiter, validateLogin, login);
 
 // ── Protected ─────────────────────────────────────────────────
 router.get('/me', protect, getMe);
+router.put('/profile', protect, updateProfile);
+router.put('/password', protect, changePassword);
 
 // ── Google OAuth ──────────────────────────────────────────────
 router.get(
