@@ -14,6 +14,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// ─── Proxy Trust ──────────────────────────────────────────────
+// Render (and most cloud hosts) run behind a reverse proxy that
+// terminates SSL. This tells Express to trust the X-Forwarded-*
+// headers so req.protocol correctly returns 'https' — required
+// for Passport OAuth callback URL generation.
+app.set('trust proxy', 1);
+
 // ─── CORS ─────────────────────────────────────────────────────
 // Build an allow-list from CLIENT_URL (may be comma-separated)
 // and always include localhost for development.
