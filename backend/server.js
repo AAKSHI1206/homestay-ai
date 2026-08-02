@@ -14,10 +14,23 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ─── Middleware ───────────────────────────────────────────────
+// ─── CORS ─────────────────────────────────────────────────────
+// Build an allow-list from CLIENT_URL (may be comma-separated)
+// and always include localhost for development.
+const allowedOrigins = [
+  'http://localhost:5173',
+  ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map(u => u.trim()) : []),
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin(origin, callback) {
+      // Allow requests with no origin (e.g. curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -55,7 +68,7 @@ connectDB().then(() => {
     console.log(`  ───────────────────────────`);
     console.log(`  → Running at  : http://localhost:${PORT}`);
     console.log(`  → Environment : ${process.env.NODE_ENV || 'development'}`);
-    console.log(`  → CORS origin : ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+    console.log(`  → CORS origins : ${allowedOrigins.join(', ')}`);
     console.log(`  → Database    : MongoDB Atlas`);
 
     // Week 7 — Gemini AI key check
