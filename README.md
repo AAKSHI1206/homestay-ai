@@ -219,3 +219,68 @@ erDiagram
 - **Week 5**: MongoDB Atlas integration, Mongoose ODM, schema design, database seeder
 - **Week 6**: JWT authentication (local + Google OAuth), protected routes, rate limiting
 - **Week 7**: AI integration (Google Gemini), review sentiment analysis, prompt engineering
+- **Week 8**: Review history, analytics dashboard, profile management, UI polish
+- **Week 9**: Deployment preparation (Vercel + Render), CORS hardening, env variable audit
+
+---
+
+## Live Deployment
+
+### URLs
+
+| Service  | URL |
+|----------|-----|
+| Frontend | `https://<your-app>.vercel.app` |
+| Backend  | `https://<your-app>.onrender.com` |
+
+> Replace the placeholder URLs above after deploying.
+
+### Tech Stack
+
+| Layer    | Technology |
+|----------|------------|
+| Frontend | React 19, Vite 8, Tailwind CSS v4, React Router v7 |
+| Backend  | Node.js, Express 4, Mongoose 9 |
+| Database | MongoDB Atlas (M0 free tier) |
+| AI       | Google Gemini 2.0 Flash (`@google/genai`) |
+| Auth     | JWT + Google OAuth 2.0 (Passport.js) |
+
+### Deployment Platforms
+
+#### Vercel (Frontend)
+
+| Setting | Value |
+|---------|-------|
+| Root Directory | `frontend` |
+| Framework Preset | Vite |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| Environment Variable | `VITE_API_URL` = `https://<your-render-app>.onrender.com/api` |
+
+#### Render (Backend)
+
+| Setting | Value |
+|---------|-------|
+| Root Directory | `backend` |
+| Build Command | `npm install` |
+| Start Command | `node server.js` |
+
+**Required Environment Variables (Render):**
+
+| Variable | Description |
+|----------|-------------|
+| `PORT` | Auto-set by Render |
+| `NODE_ENV` | `production` |
+| `CLIENT_URL` | Your Vercel frontend URL (e.g. `https://<your-app>.vercel.app`) |
+| `MONGODB_URI` | MongoDB Atlas connection string |
+| `JWT_SECRET` | Long random secret for signing tokens |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `GEMINI_API_KEY` | Google Gemini API key |
+
+### Known Free-Tier Limitations
+
+- **Render**: Free instances spin down after 15 minutes of inactivity. First request after sleep takes ~30–60 seconds (cold start).
+- **MongoDB Atlas M0**: 512 MB storage, shared cluster, limited connections.
+- **Gemini API**: Free tier has request-per-minute limits. The app's rate limiter (10 req / 15 min) stays well within bounds.
+- **Vercel**: 100 GB bandwidth/month on free tier; sufficient for demo use.
