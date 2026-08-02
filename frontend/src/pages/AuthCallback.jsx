@@ -22,7 +22,9 @@ export default function AuthCallback() {
   useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
-      setAuthFromToken(token).then(() => navigate('/dashboard', { replace: true }));
+      setAuthFromToken(token).then((success) => {
+        navigate(success ? '/dashboard' : '/login', { replace: true });
+      });
     } else {
       navigate('/login', { replace: true });
     }

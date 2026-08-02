@@ -90,9 +90,11 @@ export function AuthProvider({ children }) {
       try {
         const res = await fetchCurrentUser(newToken);
         setUser(res.data);
+        return true;
       } catch {
         saveToken(null);
         setUser(null);
+        return false;
       }
     },
     [saveToken]

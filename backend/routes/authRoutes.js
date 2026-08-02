@@ -31,10 +31,16 @@ router.get(
 
 router.get(
   '/google/callback',
-  passport.authenticate('google', {
-    session: false,
-    failureRedirect: '/login',
-  }),
+  (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user) => {
+      if (err || !user) {
+        const clientURL = process.env.CLIENT_URL || 'http://localhost:5173';
+        return res.redirect(`${clientURL}/login?error=oauth_failed`);
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   googleCallback
 );
 
