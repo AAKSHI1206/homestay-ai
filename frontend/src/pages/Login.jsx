@@ -71,7 +71,7 @@ export default function Login() {
 
       {/* Google OAuth */}
       <a
-        href="http://localhost:5000/api/auth/google"
+        href={`${(import.meta.env.VITE_API_URL || 'http://localhost:5000/api')}/auth/google`}
         className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-100 dark:hover:bg-stone-700"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
